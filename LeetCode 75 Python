@@ -1,0 +1,70 @@
+1768. Merge Strings Alternately
+class Solution(object):
+    def mergeAlternately(self, word1, word2):
+        """
+        :type word1: str
+        :type word2: str
+        :rtype: str
+        """
+        res = []
+        k1 = 0
+        k2 = 0
+        for i in range(len(word1) + len(word2)):
+            if (not (k2 < len(word2)) or (i % 2 == 0)) and (k1 < len(word1)):
+                res.append(word1[k1])
+                k1 += 1
+            if (not (k1 < len(word1)) or (i % 2 == 1)) and (k2 < len(word2)):
+                res.append(word2[k2])
+                k2 += 1
+        return ''.join(res)
+OR
+class Solution(object):
+    def mergeAlternately(self, word1, word2):
+        merge=''
+        i,j=0,0
+
+        while i < len(word1) and j < len(word2):
+            merge+=word1[i]+word2[j]
+
+            i+=1
+            j+=1
+
+        # print(merge)
+
+        if(len(word1)>len(word2)):
+           merge= merge+word1[i:]
+
+        elif(len(word1)<len(word2)):
+           merge= merge+word2[j:]
+
+        return merge
+
+1071. Greatest Common Divisor of Strings
+class Solution(object):
+    def gcdOfStrings(self, str1, str2):
+        if str1 + str2 != str2 + str1:
+            return ""
+        
+        def gcd(a, b):
+            while b:
+                a, b = b, a % b
+            return a
+            
+        return str1[:gcd(len(str1), len(str2))]
+
+1431. Kids With the Greatest Number of Candies
+class Solution(object):
+    def kidsWithCandies(self, candies, extraCandies):
+        """
+        :type candies: List[int]
+        :type extraCandies: int
+        :rtype: List[bool]
+        """
+        res = []
+        max_val = max(candies)
+        for candy in candies:
+            if candy + extraCandies >= max_val:
+                res.append(True)
+            else:
+                res.append(False)
+        return res
