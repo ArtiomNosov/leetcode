@@ -1,0 +1,70 @@
+1661. Average Time of Process per Machine
+WITH t1 (mid1, sum_start) AS (SELECT machine_id, SUM(timestamp) AS sum_start FROM Activity WHERE activity_type LIKE "start"
+GROUP BY machine_id),
+t2 (mid2, sum_end) AS (SELECT machine_id, SUM(timestamp) AS sum_end FROM Activity WHERE activity_type LIKE "end"
+GROUP BY machine_id),
+t3 (mid3, process_count) AS (SELECT machine_id, COUNT(process_id) AS sum_end FROM Activity WHERE activity_type LIKE "start"
+GROUP BY machine_id)
+OR
+SELECT t1.mid1 AS machine_id, ROUND((t2.sum_end - t1.sum_start)/t3.process_count, 3) AS processing_time FROM 
+t1 JOIN t2 ON t1.mid1=t2.mid2
+JOIN t3 ON t2.mid2=t3.mid3;
+
+577. Employee Bonus
+SELECT name, bonus
+FROM Employee LEFT JOIN Bonus 
+ON Employee.empId = Bonus.empId
+WHERE Bonus.bonus < 1000 OR Bonus.bonus IS NULL;
+
+1280. Students and Examinations
+SELECT s.student_id, s.student_name, su.subject_name, 
+
+#Because they asked the each student & each exam, which has to count every record 
+(SELECT COUNT(1) 
+	FROM Examinations 
+	# Don't forgot to connect TWO variables 
+	WHERE student_id = s.student_id 
+	AND subject_name = su.subject_name) AS attended_exams
+FROM Students s
+JOIN Subjects su
+ ORDER BY s.student_id, su.subject_name
+OR
+# Write your MySQL query statement below
+select s1.student_id,s1.student_name,s2.subject_name,count(s3.subject_name) as attended_exams
+from Students s1
+join subjects s2
+left join Examinations s3
+on s1.student_id=s3.student_id and s2.subject_name= s3.subject_name
+group by s1.student_id, s2.subject_name
+order by student_id,subject_name;
+
+570. Managers with at Least 5 Direct Reports
+SELECT name FROM 
+Employee e LEFT JOIN (SELECT managerId, COUNT(1) AS c FROM Employee GROUP BY managerId) t
+ON e.id = t.managerId
+WHERE t.c >= 5;
+OR
+SELECT e.name
+FROM Employee e ,Employee m
+WHERE e.id = m.managerId 
+GROUP BY e.id
+HAVING COUNT(m.id) >= 5
+
+1934. Confirmation Rate
+# Write your MySQL query statement below
+SELECT s.user_id, 
+ROUND(COALESCE((SELECT COUNT(1) 
+	FROM Confirmations
+	# Don't forgot to connect TWO variables 
+	WHERE user_id = s.user_id AND action LIKE "confirmed")/(SELECT COUNT(1) 
+	FROM Confirmations
+	# Don't forgot to connect TWO variables 
+	WHERE user_id = s.user_id), 0), 2) AS confirmation_rate 
+FROM Signups s;
+OR
+SELECT s.user_id, round(ifnull(avg(c.action = 'confirmed'), 0),2) as confirmation_rate
+from signups s left join confirmations c on s.user_id = c.user_id
+group by user_id
+
+620. Not Boring Movies
+SELECT * FROM Cinema WHERE id % 2 = 1 AND description NOT LIKE "boring" ORDER BY rating DESC;
